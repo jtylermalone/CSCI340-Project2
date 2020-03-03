@@ -45,12 +45,12 @@ class Job:
 # with a  space in between each page because I had to
 # alter it to make it cleanly print the page table when 
 #there are 10+ jobs
-def print_page_table(simulated_memory_size, memory_list):
+def print_page_table(simulated_memory_size, memory_list, page_size):
 	print("    Page table:")
 	print("        ", end='')
 	
 	# printing a space after each 4 pages
-	for i in range(int(simulated_memory_size) / 1000):
+	for i in range(int(simulated_memory_size) / int(page_size)):
 		if (i > 0 and (i % 4 == 0) and (i % 16 != 0)):
 			print("   ", end='')
 
@@ -104,6 +104,10 @@ def main():
 	max_runtime = sys.argv[5]
 	min_memory = sys.argv[6]
 	max_memory = sys.argv[7]
+
+	if int(simulated_memory_size) % int(page_size) != 0:
+		print("\nError: The memory size you provided is not an even multiple of the page size!\n")
+		return
 	
 	# printing information as required
 	print("\nSimulator Parameters:")
@@ -127,19 +131,27 @@ def main():
 	# generating list of memory size of each job...
 	# we are using the round function to round each randomly generated
 	# number to the nearest 1000
+	
+	# round down to nearest multiple of page size
 	for i in range(int(num_jobs)):
-		memorysize_list.append(int(round(random.randint(int(min_memory), int(max_memory)), -3)))
+		#memorysize_list.append(int(random.randint(int(min_memory), int(max_memory))))
+		current_memory_size = random.randint(int(min_memory), int(max_memory))
+		sub_value = current_memory_size % int(page_size)
+		current_memory_size = current_memory_size - sub_value
+		memorysize_list.append(current_memory_size)
+		print("size: " + str(memorysize_list[i]))
+		print("calculation: " + str((int(memorysize_list[i]) % int(page_size))))
 
 
 	# adding jobs to jobs list and memory sizes to memory list
-	remaining_memory = int(simulated_memory_size) / 1000
+	remaining_memory = int(simulated_memory_size) / int(page_size)
 	for i in range(int(num_jobs)):
 
 		# this if-else checks whether there is enough memory remaining
 		# to add the job... if not, it will say so. if so, the job gets
 		# added to jobs_list and the job gets added to memory (added to
 		# memory list)
-		if(remaining_memory < (memorysize_list[i] / 1000)):
+		if(remaining_memory < (memorysize_list[i] / int(page_size))):
 			for j in range(i, int(num_jobs)):
 				print("Job #" + str(j + 1) + " was not added... not enough space in memory!")
 			print()
@@ -152,9 +164,9 @@ def main():
 			break
 		else:
 			jobs_list.append(Job(job_names_list[i], runtime_list[i], memorysize_list[i]))
-			for j in range(memorysize_list[i] / 1000):
+			for j in range(memorysize_list[i] / int(page_size)):
 				memory_list.append(job_names_list[i])
-			remaining_memory = remaining_memory - (memorysize_list[i] / 1000)
+			remaining_memory = remaining_memory - (memorysize_list[i] / int(page_size))
 	
 	# we need this number_of_jobs variable at the end of the 
 	# program when we print out each job's start + end time.
@@ -198,7 +210,7 @@ def main():
 		print("    Job " + str(jobs_list[0].program_name) + " Running")
 
 		# printing the page table each loop
-		print_page_table(simulated_memory_size, memory_list)
+		print_page_table(simulated_memory_size, memory_list, page_size)
 		
 		# if the job still has remaining runtime,
 		# we decrement the job's current runtime

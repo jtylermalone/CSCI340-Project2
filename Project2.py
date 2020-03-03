@@ -3,17 +3,37 @@ import sys
 import os
 import random
 
+############# INSTRUCTIONS FOR RUNNING THIS PROGRAM ON LINUX ###############
+#
+#	1. in the terminal, navigate to the folder
+# 	containing this file
+#
+# 	2. set the random seed environment variable to 
+# 	a value of your liking like this:
+#
+#		export RANDOM_SEED=<number of your choosing>
+#
+#	   for example:
+#
+#	    export RANDOM_SEED=13
+#
+#	3. run the following command:
+#
+#		python Project2.py <memory_size> <page_size> <number_of_jobs> <min_runtime> 	       <max_runtime> <min_program_memory> <max_program_memory>
+#
+#	   here's an example:
+#		
+#		python Project2.py 64000 1000 10 4 10 5000 17000
+#
+#	   NOTE: make sure that the minimum runtime is smaller than maximum runtime
+#			 (same for minimum program memory as well). The program will crash 
+#			 in that instance. Also don't make page size larger than overall 
+#			 memory size.
+#
+###########################################################################
 
-    ####################### ISSUES ###########################################################
-
-	# I'm not 100% pleased with how the page table looks
-
-	# Formatting of initially-printed job queue is off... can't figure out why
-
-	#########################################################################################
-
-
-# we instantiate each job as an object.
+# we instantiate each job as an object and store
+# each job object in a list
 class Job:
 	def __init__(self, program_name, runtime, memory_size):
 		self.program_name = program_name
@@ -21,9 +41,10 @@ class Job:
 		self.runtime = runtime
 
 # this function is being defined here to make the code look
-# less clunky than it already does. I had to alter it
-# to make it cleanly print the page table when there are
-# 10+ jobs
+# less clunky than it already does. The page table is printed
+# with a  space in between each page because I had to
+# alter it to make it cleanly print the page table when 
+#there are 10+ jobs
 def print_page_table(simulated_memory_size, memory_list):
 	print("    Page table:")
 	print("        ", end='')
@@ -85,7 +106,7 @@ def main():
 	max_memory = sys.argv[7]
 	
 	# printing information as required
-	print("Simulator Parameters:")
+	print("\nSimulator Parameters:")
 	print("   Memory size: " + str(simulated_memory_size))
 	print("   Page size: " + str(page_size))
 	print("   Random seed: " + str(random_seed))
